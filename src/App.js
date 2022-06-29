@@ -8,18 +8,18 @@ import StyledContent from './components/Content';
 
 const Container = styled.div`
     display: flex;
+    align-items: stretch;
+    height: 100vh;
 `;
 
 function App() {
     return (
-        <div>
+        <>
             <Container>
                 <NavigaionBar />
-                <Content>
-                    <ToDoHeader />
-                </Content>
+                <Content />
             </Container>
-        </div>
+        </>
     );
 }
 

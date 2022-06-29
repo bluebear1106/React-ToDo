@@ -9,12 +9,19 @@ const StyledHeader = styled.div`
     justify-content: space-evenly;
     align-items: center;
     font-weight: 600;
+
+    .right {
+        border-right: 1px solid black;
+    }
+
+    .left {
+        border-left: 1px solid black;
+    }
 `;
 
 const StyledHeaderButton = styled.div`
-    width: 80px;
+    flex-grow: 1;
     background: ${Colors.F4F9F9};
-    border-radius: 4px;
     text-align: center;
     &:hover {
         color: ${Colors.AAAAAA};
@@ -24,8 +31,8 @@ const StyledHeaderButton = styled.div`
 const ToDoHeader = () => {
     return (
         <StyledHeader>
-            <StyledHeaderButton>해야할 일</StyledHeaderButton>
-            <StyledHeaderButton>끝낸 일</StyledHeaderButton>
+            <StyledHeaderButton className="right">해야할 일</StyledHeaderButton>
+            <StyledHeaderButton className="left">끝낸 일</StyledHeaderButton>
         </StyledHeader>
     );
 };
