@@ -28,9 +28,28 @@ const StyledNavItem = styled.div`
     font-weight: 600;
     margin: 20px 20px 20px 20px;
 
-    &:hover {
+    .box {
+        width: 5px;
+        height: 30px;
+        margin-right: 10px;
+        background: black;
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    &:hover .box {
         color: ${Colors.AAAAAA};
         cursor: pointer;
+    }
+    .active {
+        background: skyblue;
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    .text {
+        display: inline-block;
+        vertical-align: middle;
     }
 `;
 
@@ -41,7 +60,10 @@ const NavigaionBar = () => {
                 <FontAwesomeIcon icon={faList} size="2x" />
                 <span>ToDo</span>
             </StyledNavHeader>
-            <StyledNavItem>오늘 할 일</StyledNavItem>
+            <StyledNavItem>
+                <div className="box"></div>
+                <div className="text">오늘 할 일</div>
+            </StyledNavItem>
             <StyledNavItem>중요</StyledNavItem>
             <StyledNavItem>중요</StyledNavItem>
             <StyledNavItem>테스트</StyledNavItem>
