@@ -5,7 +5,7 @@ import Colors from "../colors/colors";
 const StyledHeaderBox = styled.div`
     height: 40px;
     background: ${Colors.F4F9F9};
-    font-weight: 600;
+    font-weight: bold;
 `;
 
 const StyledHeader = styled.div`

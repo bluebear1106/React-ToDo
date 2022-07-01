@@ -3,15 +3,18 @@ import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faList } from "../../node_modules/@fortawesome/free-solid-svg-icons/index";
 import Colors from "../colors/colors";
+import NavTaskAddItem from "./nav/NavTaskAddItem";
 
 const StyledNavBar = styled.div`
     width: 260px;
     background: ${Colors.F4F9F9};
+    display: flex;
+    flex-direction: column;
 `;
 
 const StyledNavHeader = styled.div`
     color: ${Colors.AAAAAA};
-    font-weight: 600;
+    font-weight: bold;
     margin: 20px 20px 20px 20px;
     display: flex;
     align-items: center;
@@ -23,11 +26,21 @@ const StyledNavHeader = styled.div`
     }
 `;
 
+const StyledNavMenuBox = styled.div`
+    border-bottom: 1px solid ${Colors.AAAAAA};
+`;
+
+const StyledNavToDoListBox = styled.div`
+    flex-grow: 1;
+`;
+
 const StyledNavItem = styled.div`
     color: black;
-    font-weight: 600;
-    margin: 20px 20px 20px 20px;
+    font-weight: bold;
+    margin: 10px;
+`;
 
+const StyledNavMenuItem = styled(StyledNavItem)`
     .box {
         width: 5px;
         height: 30px;
@@ -37,10 +50,17 @@ const StyledNavItem = styled.div`
         vertical-align: middle;
     }
 
-    &:hover .box {
+    &:hover {
         color: ${Colors.AAAAAA};
         cursor: pointer;
     }
+
+    &:hover .box {
+        background: ${Colors.AAAAAA};
+        color: ${Colors.AAAAAA};
+        cursor: pointer;
+    }
+
     .active {
         background: skyblue;
         display: inline-block;
@@ -53,20 +73,41 @@ const StyledNavItem = styled.div`
     }
 `;
 
-const NavigaionBar = () => {
+const NavMenuBox = ({ menus, menuClick }) => {
+    return (
+        <StyledNavMenuBox>
+            {menus.list.map((menu) => (
+                <StyledNavMenuItem key={menu.id} onClick={() => menuClick(menu.id)}>
+                    <div className={`box ${menus.menuId === menu.id ? "active" : ""}`} />
+                    <div className="text">{menu.title}</div>
+                </StyledNavMenuItem>
+            ))}
+        </StyledNavMenuBox>
+    );
+};
+
+const NavToDoListBox = ({ tasks, onTaskAdd }) => {
+    return (
+        <StyledNavToDoListBox>
+            {tasks.map((task) => (
+                <StyledNavMenuItem key={task.todoId}>
+                    <div className="text">{task.title}</div>
+                </StyledNavMenuItem>
+            ))}
+            <NavTaskAddItem onTaskAdd={onTaskAdd} />
+        </StyledNavToDoListBox>
+    );
+};
+
+const NavigaionBar = ({ menus, tasks, menuClick, onTaskAdd }) => {
     return (
         <StyledNavBar>
             <StyledNavHeader>
                 <FontAwesomeIcon icon={faList} size="2x" />
                 <span>ToDo</span>
             </StyledNavHeader>
-            <StyledNavItem>
-                <div className="box"></div>
-                <div className="text">오늘 할 일</div>
-            </StyledNavItem>
-            <StyledNavItem>중요</StyledNavItem>
-            <StyledNavItem>중요</StyledNavItem>
-            <StyledNavItem>테스트</StyledNavItem>
+            <NavMenuBox menus={menus} menuClick={menuClick} />
+            <NavToDoListBox tasks={tasks} onTaskAdd={onTaskAdd} />
         </StyledNavBar>
     );
 };

@@ -1,8 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 import Colors from "../colors/colors";
-import ListAddBar from "./ListAddBar";
-import ToDoHeader from "./ToDoHeader";
 import ToDoList from "./ToDoList";
 
 const StyledContent = styled.div`
@@ -11,12 +9,10 @@ const StyledContent = styled.div`
     border-left: 1px solid ${Colors.AAAAAA};
 `;
 
-const Content = ({ children }) => {
+const Content = ({ type }) => {
     return (
         <StyledContent>
-            <ToDoHeader />
-            <ToDoList />
-            <ListAddBar />
+            <ToDoList type={type} />
         </StyledContent>
     );
 };
