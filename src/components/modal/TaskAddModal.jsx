@@ -33,11 +33,13 @@ const TaskAddModal = ({ visible, onCancel, onConfirm }) => {
         <Modal
             visible={visible}
             title="작업 추가"
-            content={<Content onChange={onChange} />}
+            //content={<Content onChange={onChange} />}
             onCancel={onCancel}
             confirmText="추가"
             onConfirm={() => onConfirm(text)}
-        />
+        >
+            <Content onChange={onChange} />
+        </Modal>
     );
 };
 

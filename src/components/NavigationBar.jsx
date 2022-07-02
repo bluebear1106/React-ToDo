@@ -1,12 +1,12 @@
 import React from "react";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faList } from "../../node_modules/@fortawesome/free-solid-svg-icons/index";
+import { faList, faStar, faSun } from "../../node_modules/@fortawesome/free-solid-svg-icons/index";
 import Colors from "../colors/colors";
 import NavTaskAddItem from "./nav/NavTaskAddItem";
 
 const StyledNavBar = styled.div`
-    width: 260px;
+    width: 320px;
     background: ${Colors.F4F9F9};
     display: flex;
     flex-direction: column;
@@ -73,41 +73,60 @@ const StyledNavMenuItem = styled(StyledNavItem)`
     }
 `;
 
-const NavMenuBox = ({ menus, menuClick }) => {
-    return (
-        <StyledNavMenuBox>
-            {menus.list.map((menu) => (
-                <StyledNavMenuItem key={menu.id} onClick={() => menuClick(menu.id)}>
-                    <div className={`box ${menus.menuId === menu.id ? "active" : ""}`} />
-                    <div className="text">{menu.title}</div>
-                </StyledNavMenuItem>
-            ))}
-        </StyledNavMenuBox>
-    );
-};
+// const NavMenuBox = ({ taskId, menuClick }) => {
+//     return (
+//         <StyledNavMenuBox>
+//             {menus.list.map((menu) => (
+//                 <StyledNavMenuItem key={menu.id} onClick={() => menuClick(menu.id)}>
+//                     <div className={`box ${menus.menuId === menu.id ? "active" : ""}`} />
+//                     <div className="text">{menu.title}</div>
+//                 </StyledNavMenuItem>
+//             ))}
+//         </StyledNavMenuBox>
+//     );
+// };
 
-const NavToDoListBox = ({ tasks, onTaskAdd }) => {
-    return (
-        <StyledNavToDoListBox>
-            {tasks.map((task) => (
-                <StyledNavMenuItem key={task.todoId}>
-                    <div className="text">{task.title}</div>
-                </StyledNavMenuItem>
-            ))}
-            <NavTaskAddItem onTaskAdd={onTaskAdd} />
-        </StyledNavToDoListBox>
-    );
-};
+// const NavToDoListBox = ({ tasks, onTaskAdd }) => {
+//     return (
+//         <StyledNavToDoListBox>
+//             {tasks.map((task) => (
+//                 <StyledNavMenuItem key={task.todoId}>
+//                     <div className="text">{task.title}</div>
+//                 </StyledNavMenuItem>
+//             ))}
+//             <NavTaskAddItem onTaskAdd={onTaskAdd} />
+//         </StyledNavToDoListBox>
+//     );
+// };
 
-const NavigaionBar = ({ menus, tasks, menuClick, onTaskAdd }) => {
+const NavigaionBar = ({ taskId, tasks, onTaskClick, onTaskAdd }) => {
     return (
         <StyledNavBar>
             <StyledNavHeader>
                 <FontAwesomeIcon icon={faList} size="2x" />
                 <span>ToDo</span>
             </StyledNavHeader>
-            <NavMenuBox menus={menus} menuClick={menuClick} />
-            <NavToDoListBox tasks={tasks} onTaskAdd={onTaskAdd} />
+            <StyledNavMenuBox>
+                {tasks.map((task) =>
+                    task.type === "menu" ? (
+                        <StyledNavMenuItem key={task.taskId} onClick={() => onTaskClick(task.taskId)}>
+                            <div className={`box ${task.taskId === taskId ? "active" : ""}`} />
+                            <div className="text">{task.title}</div>
+                        </StyledNavMenuItem>
+                    ) : null
+                )}
+            </StyledNavMenuBox>
+            <StyledNavToDoListBox>
+                {tasks.map((task) =>
+                    task.type === "task" ? (
+                        <StyledNavMenuItem key={task.taskId} onClick={() => onTaskClick(task.taskId)}>
+                            <div className={`box ${task.taskId === taskId ? "active" : ""}`} />
+                            <div className="text">{task.title}</div>
+                        </StyledNavMenuItem>
+                    ) : null
+                )}
+                <NavTaskAddItem onTaskAdd={onTaskAdd} />
+            </StyledNavToDoListBox>
         </StyledNavBar>
     );
 };

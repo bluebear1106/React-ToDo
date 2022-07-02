@@ -22,10 +22,15 @@ const StyledHeader = styled.div`
 `;
 
 const StyledListBox = styled.div`
-    height: 600px;
+    height: 520px;
     display: flex;
     flex-direction: column;
     align-items: stretch;
+    overflow-y: scroll;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
 `;
 
 const StyledListItem = styled.div`
@@ -44,6 +49,10 @@ const StyledListItem = styled.div`
         font-weight: bold;
         vertical-align: middle;
     }
+
+    & + & {
+        margin-top: 10px;
+    }
 `;
 
 const ToDoHeader = ({ listName }) => {
@@ -54,17 +63,27 @@ const ToDoHeader = ({ listName }) => {
     );
 };
 
-const ToDoList = ({ type }) => {
+const TodoListItem = ({ todo }) => {
+    return (
+        <StyledListItem>
+            <FontAwesomeIcon className="icon" icon={faFileAlt} size="2x" />
+            <div className="text">{todo.do}</div>
+        </StyledListItem>
+    );
+};
+
+const ToDoList = ({ taskId, task, onToDoAdd }) => {
     return (
         <>
-            <ToDoHeader />
+            <StyledHeaderBox>
+                <StyledHeader>{task.title}</StyledHeader>
+            </StyledHeaderBox>
             <StyledListBox>
-                <StyledListItem>
-                    <FontAwesomeIcon className="icon" icon={faFileAlt} size="2x" />
-                    <div className="text">테스트</div>
-                </StyledListItem>
+                {task.todos.map((todo, index) => (
+                    <TodoListItem key={index} todo={todo} />
+                ))}
             </StyledListBox>
-            {type && type === "task" ? <ListAddBar /> : null}
+            {task && task.type === "task" ? <ListAddBar taskId={taskId} onToDoAdd={onToDoAdd} /> : null}
         </>
     );
 };

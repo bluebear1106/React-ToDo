@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import Colors from "../colors/colors";
 import { FontAwesomeIcon } from "../../node_modules/@fortawesome/react-fontawesome/index";
@@ -6,12 +6,12 @@ import { faPlus } from "../../node_modules/@fortawesome/free-solid-svg-icons/ind
 
 const StyledBox = styled.div`
     background: white;
-    width: 600px;
+    //width: 600px;
     height: 35px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: auto;
+    margin-top: 20px;
 `;
 
 const StyledIcon = styled(FontAwesomeIcon)`
@@ -48,16 +48,23 @@ const StyledButton = styled.button`
     }
 `;
 
-const ListAddBar = () => {
+const ListAddBar = ({ taskId, onToDoAdd }) => {
+    const [text, setText] = useState("");
+    const onChange = (e) => {
+        setText(e.target.value);
+    };
+
+    const onAdd = () => {
+        onToDoAdd(taskId, text);
+        setText("");
+    };
+
     return (
         <>
             <StyledBox>
                 <StyledIcon icon={faPlus} size="1x" />
-                <StyledInput
-                    type="text"
-                    placeholder="추가할 일정을 입력해주세요."
-                />
-                <StyledButton>추가</StyledButton>
+                <StyledInput type="text" placeholder="추가할 일정을 입력해주세요." value={text} onChange={onChange} />
+                <StyledButton onClick={onAdd}>추가</StyledButton>
             </StyledBox>
         </>
     );

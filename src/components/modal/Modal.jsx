@@ -54,14 +54,23 @@ const StyleModalButton = styled.button`
     }
 `;
 
-const Modal = ({ visible, title, content, onCancel, cancelText = "취소", onConfirm = "확인", confirmText }) => {
+const Modal = ({
+    children,
+    visible,
+    title,
+    content,
+    onCancel,
+    cancelText = "취소",
+    onConfirm = "확인",
+    confirmText,
+}) => {
     return (
         <>
             {visible && (
                 <StyledModalBack>
                     <StyledModalBox>
                         <h2>{title}</h2>
-                        <>{content}</>
+                        <>{children}</>
                         <div className="modal-btn">
                             <StyleModalButton onClick={onCancel}>{cancelText}</StyleModalButton>
                             <StyleModalButton onClick={onConfirm}>{confirmText}</StyleModalButton>

@@ -4,15 +4,16 @@ import Colors from "../colors/colors";
 import ToDoList from "./ToDoList";
 
 const StyledContent = styled.div`
+    padding: 20px;
     background: ${Colors.F4F9F9};
     flex-grow: 1;
     border-left: 1px solid ${Colors.AAAAAA};
 `;
 
-const Content = ({ type }) => {
+const Content = ({ taskId, task, onToDoAdd }) => {
     return (
         <StyledContent>
-            <ToDoList type={type} />
+            <ToDoList taskId={taskId} task={task} onToDoAdd={onToDoAdd} />
         </StyledContent>
     );
 };
