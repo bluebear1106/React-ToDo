@@ -61,8 +61,8 @@ const Modal = ({
     content,
     onCancel,
     cancelText = "취소",
-    onConfirm = "확인",
-    confirmText,
+    onConfirm,
+    confirmText = "확인",
 }) => {
     return (
         <>
@@ -72,7 +72,9 @@ const Modal = ({
                         <h2>{title}</h2>
                         <>{children}</>
                         <div className="modal-btn">
-                            <StyleModalButton onClick={onCancel}>{cancelText}</StyleModalButton>
+                            {onCancel !== false ? (
+                                <StyleModalButton onClick={onCancel}>{cancelText}</StyleModalButton>
+                            ) : null}
                             <StyleModalButton onClick={onConfirm}>{confirmText}</StyleModalButton>
                         </div>
                     </StyledModalBox>

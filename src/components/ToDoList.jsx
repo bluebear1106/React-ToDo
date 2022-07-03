@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import Colors from "../colors/colors";
 import { FontAwesomeIcon } from "../../node_modules/@fortawesome/react-fontawesome/index";
-import { faFileAlt } from "../../node_modules/@fortawesome/free-regular-svg-icons/index";
+import { faFileAlt, faTrashCan, faSquareCheck } from "../../node_modules/@fortawesome/free-regular-svg-icons/index";
 import ListAddBar from "./ListAddBar";
 
 const StyledHeaderBox = styled.div`
@@ -16,9 +16,6 @@ const StyledHeader = styled.div`
     font-size: 24px;
     background: ${Colors.F4F9F9};
     text-align: left;
-    &:hover {
-        color: ${Colors.AAAAAA};
-    }
 `;
 
 const StyledListBox = styled.div`
@@ -36,7 +33,7 @@ const StyledListBox = styled.div`
 const StyledListItem = styled.div`
     margin: 0px 25px;
     border-radius: 4px;
-    background: white;
+    background: rgb(255, 255, 255);
 
     .icon {
         margin: 5px;
@@ -50,8 +47,55 @@ const StyledListItem = styled.div`
         vertical-align: middle;
     }
 
+    &:hover {
+        background: rgba(230, 230, 230, 0.25);
+    }
+
+    &:hover .icon {
+        color: rgb(255, 255, 255);
+    }
+
     & + & {
         margin-top: 10px;
+    }
+
+    .sub-menu {
+        width: 100px;
+        float: right;
+        display: none;
+    }
+
+    .sub-menu .item {
+        display: inline-block;
+        width: 40px;
+        height: 30px;
+        padding: 5px;
+        text-align: center;
+        //background: red;
+    }
+
+    .sub-menu .done {
+        background: skyblue;
+    }
+
+    .sub-menu .delete {
+        background: red;
+    }
+
+    .sub-menu .item svg {
+        vertical-align: middle;
+    }
+
+    &:hover .sub-menu {
+        display: inline-block;
+    }
+
+    .sub-menu .done:hover {
+        background: rgba(135, 206, 235, 0.5);
+    }
+
+    .sub-menu .delete:hover {
+        background: rgba(255, 0, 0, 0.5);
     }
 `;
 
@@ -63,16 +107,24 @@ const ToDoHeader = ({ listName }) => {
     );
 };
 
-const TodoListItem = ({ todo }) => {
+const TodoListItem = ({ todo, taskId, onToDoDone, onToDoDelete }) => {
     return (
         <StyledListItem>
             <FontAwesomeIcon className="icon" icon={faFileAlt} size="2x" />
             <div className="text">{todo.do}</div>
+            <div className="sub-menu">
+                <div className="item done" onClick={() => onToDoDone(taskId, todo.todoId)}>
+                    <FontAwesomeIcon icon={faSquareCheck} size="lg" />
+                </div>
+                <div className="item delete" onClick={() => onToDoDelete(taskId, todo.todoId)}>
+                    <FontAwesomeIcon icon={faTrashCan} size="lg" />
+                </div>
+            </div>
         </StyledListItem>
     );
 };
 
-const ToDoList = ({ taskId, task, onToDoAdd }) => {
+const ToDoList = ({ taskId, task, onToDoAdd, onToDoDone, onToDoDelete }) => {
     return (
         <>
             <StyledHeaderBox>
@@ -80,7 +132,13 @@ const ToDoList = ({ taskId, task, onToDoAdd }) => {
             </StyledHeaderBox>
             <StyledListBox>
                 {task.todos.map((todo, index) => (
-                    <TodoListItem key={index} todo={todo} />
+                    <TodoListItem
+                        key={index}
+                        todo={todo}
+                        taskId={taskId}
+                        onToDoDone={onToDoDone}
+                        onToDoDelete={onToDoDelete}
+                    />
                 ))}
             </StyledListBox>
             {task && task.type === "task" ? <ListAddBar taskId={taskId} onToDoAdd={onToDoAdd} /> : null}

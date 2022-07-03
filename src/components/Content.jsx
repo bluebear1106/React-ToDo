@@ -10,10 +10,16 @@ const StyledContent = styled.div`
     border-left: 1px solid ${Colors.AAAAAA};
 `;
 
-const Content = ({ taskId, task, onToDoAdd }) => {
+const Content = ({ taskId, task, onToDoAdd, onToDoDone, onToDoDelete }) => {
     return (
         <StyledContent>
-            <ToDoList taskId={taskId} task={task} onToDoAdd={onToDoAdd} />
+            <ToDoList
+                taskId={taskId}
+                task={task}
+                onToDoAdd={onToDoAdd}
+                onToDoDone={onToDoDone}
+                onToDoDelete={onToDoDelete}
+            />
         </StyledContent>
     );
 };

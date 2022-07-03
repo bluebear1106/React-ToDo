@@ -51,7 +51,9 @@ const StyledNavMenuItem = styled(StyledNavItem)`
     }
 
     &:hover {
-        color: ${Colors.AAAAAA};
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+        //color: ${Colors.AAAAAA};
         cursor: pointer;
     }
 

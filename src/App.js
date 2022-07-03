@@ -1,9 +1,9 @@
-import './App.css';
-import NavigaionBar from './components/NavigationBar';
-import styled from 'styled-components';
-import Content from './components/Content';
-import { useState } from 'react';
-import { useEffect } from 'react';
+import "./App.css";
+import NavigaionBar from "./components/NavigationBar";
+import styled from "styled-components";
+import Content from "./components/Content";
+import { useState } from "react";
+import { useEffect } from "react";
 
 const Container = styled.div`
     display: flex;
@@ -23,8 +23,8 @@ const menus = {
             type: "important",
             id: 1,
             title: "중요",
-        }
-    ]
+        },
+    ],
 };
 
 const tasks = [
@@ -32,33 +32,37 @@ const tasks = [
         taskId: 0,
         type: "menu",
         title: "오늘 할 일",
-        date: '',
+        date: "",
         todos: [
             {
+                todoId: 0,
                 do: "작업1",
-                state: false
+                state: false,
             },
             {
+                todoId: 1,
                 do: "작업1",
-                state: false
-            }
-        ]
+                state: false,
+            },
+        ],
     },
     {
         taskId: 1,
         type: "menu",
         title: "중요",
-        date: '',
+        date: "",
         todos: [
             {
-                do: "중요1",
-                state: false
+                todoId: 0,
+                do: "작업1",
+                state: false,
             },
             {
-                do: "중요1",
-                state: false
-            }
-        ]
+                todoId: 1,
+                do: "작업1",
+                state: false,
+            },
+        ],
     },
     {
         taskId: 2,
@@ -67,34 +71,18 @@ const tasks = [
         date: new Date().toLocaleTimeString(),
         todos: [
             {
+                todoId: 0,
                 do: "작업1",
-                state: false
+                state: false,
             },
             {
+                todoId: 1,
                 do: "작업1",
-                state: false
-            }
-        ]
+                state: false,
+            },
+        ],
     },
-    {
-        taskId: 3,
-        type: "task",
-        title: "테스트2",
-        date: new Date().toLocaleTimeString(),
-        todos: [
-            {
-                do: "작업2",
-                state: false
-            },
-            {
-                do: "작업2",
-                state: false
-
-            }
-        ]
-    }
 ];
-
 
 function App() {
     const [taskId, setTaskId] = useState(0);
@@ -106,34 +94,57 @@ function App() {
 
     const onTaskAdd = (taskTitle) => {
         const temp = {
-            todoId: 5,
-            type: 'task',
+            todoId: 3,
+            type: "task",
             title: taskTitle,
             date: new Date().toLocaleTimeString(),
-            todos: []
-        }
+            todos: [],
+        };
         setTask(task.concat(temp));
     };
 
     const onToDoAdd = (taskId, text) => {
         const todo = {
             do: text,
-            state: false
+            state: false,
         };
-        const temp = task.map((t) => {
-            return t.taskId === taskId ? { ...t, todos: t.todos.concat(todo) } : t
-        });
 
-        setTask(task.map((t) => {
-            return t.taskId === taskId ? { ...t, todos: t.todos.concat(todo) } : t
-        }));
+        setTask(
+            task.map((t) => {
+                return t.taskId === taskId ? { ...t, todos: t.todos.concat(todo) } : t;
+            })
+        );
+    };
+
+    const onToDoDone = (taskId, todoId) => {
+        setTask(
+            task.map((t) => {
+                return t.taskId === taskId
+                    ? { ...t, todos: t.todos.map((todo) => (todo.todoId === todoId ? { ...todo, state: true } : todo)) }
+                    : t;
+            })
+        );
+    };
+
+    const onToDoDelete = (taskId, todoId) => {
+        setTask(
+            task.map((t) => {
+                return t.taskId === taskId ? { ...t, todos: t.todos.filter((todo) => todo.todoId !== todoId) } : t;
+            })
+        );
     };
 
     return (
         <>
             <Container>
                 <NavigaionBar taskId={taskId} tasks={task} onTaskClick={onTaskClick} onTaskAdd={onTaskAdd} />
-                <Content taskId={taskId} task={task.find((t) => t.taskId === taskId)} onToDoAdd={onToDoAdd} />
+                <Content
+                    taskId={taskId}
+                    task={task.find((t) => t.taskId === taskId)}
+                    onToDoAdd={onToDoAdd}
+                    onToDoDone={onToDoDone}
+                    onToDoDelete={onToDoDelete}
+                />
             </Container>
         </>
     );

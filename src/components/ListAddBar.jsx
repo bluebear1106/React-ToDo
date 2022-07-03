@@ -3,15 +3,16 @@ import styled from "styled-components";
 import Colors from "../colors/colors";
 import { FontAwesomeIcon } from "../../node_modules/@fortawesome/react-fontawesome/index";
 import { faPlus } from "../../node_modules/@fortawesome/free-solid-svg-icons/index";
+import Modal from "./common/Modal";
 
 const StyledBox = styled.div`
     background: white;
-    //width: 600px;
+    width: 600px;
     height: 35px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 20px;
+    margin: 20px auto 0 auto;
 `;
 
 const StyledIcon = styled(FontAwesomeIcon)`
@@ -50,13 +51,23 @@ const StyledButton = styled.button`
 
 const ListAddBar = ({ taskId, onToDoAdd }) => {
     const [text, setText] = useState("");
+    const [modal, setModal] = useState(false);
+
     const onChange = (e) => {
         setText(e.target.value);
     };
 
     const onAdd = () => {
+        if (text === "") {
+            setModal(true);
+            return;
+        }
         onToDoAdd(taskId, text);
         setText("");
+    };
+
+    const onModalConfirm = () => {
+        setModal(false);
     };
 
     return (
@@ -65,6 +76,9 @@ const ListAddBar = ({ taskId, onToDoAdd }) => {
                 <StyledIcon icon={faPlus} size="1x" />
                 <StyledInput type="text" placeholder="추가할 일정을 입력해주세요." value={text} onChange={onChange} />
                 <StyledButton onClick={onAdd}>추가</StyledButton>
+                <Modal visible={modal} title="정보" confirmText="확인" onCancel={false} onConfirm={onModalConfirm}>
+                    <p>내용을 적어주세요!</p>
+                </Modal>
             </StyledBox>
         </>
     );
