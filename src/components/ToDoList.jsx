@@ -71,6 +71,7 @@ const StyledListItem = styled.div`
         height: 30px;
         padding: 5px;
         text-align: center;
+        line-height: 30px;
         //background: red;
     }
 
@@ -83,7 +84,7 @@ const StyledListItem = styled.div`
     }
 
     .sub-menu .item svg {
-        vertical-align: middle;
+        //vertical-align: middle;
     }
 
     &:hover .sub-menu {
