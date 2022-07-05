@@ -33,55 +33,79 @@ const tasks = [
         type: "menu",
         title: "오늘 할 일",
         date: "",
-        todos: [
-            {
-                todoId: 0,
-                do: "작업1",
-                state: false,
-            },
-            {
-                todoId: 1,
-                do: "작업1",
-                state: false,
-            },
-        ],
+        todos: {
+            progress: [
+                {
+                    todoId: 0,
+                    do: "작업1",
+                    state: false,
+                },
+                {
+                    todoId: 1,
+                    do: "작업1",
+                    state: false,
+                }
+            ],
+            complete: [
+                {
+                    todoId: 2,
+                    do: "작업2"
+                }
+            ]
+        }
     },
     {
         taskId: 1,
         type: "menu",
         title: "중요",
         date: "",
-        todos: [
-            {
-                todoId: 0,
-                do: "작업1",
-                state: false,
-            },
-            {
-                todoId: 1,
-                do: "작업1",
-                state: false,
-            },
-        ],
+        todos: {
+            progress: [
+                {
+                    todoId: 0,
+                    do: "작업1",
+                    state: false,
+                },
+                {
+                    todoId: 1,
+                    do: "작업1",
+                    state: false,
+                }
+            ],
+            complete: [
+                {
+                    todoId: 2,
+                    do: "작업2"
+                }
+            ]
+        }
     },
     {
         taskId: 2,
         type: "task",
         title: "테스트",
         date: new Date().toLocaleTimeString(),
-        todos: [
-            {
-                todoId: 0,
-                do: "작업1",
-                state: false,
-            },
-            {
-                todoId: 1,
-                do: "작업1",
-                state: false,
-            },
-        ],
-    },
+        todos: {
+            progress: [
+                {
+                    todoId: 0,
+                    do: "작업1",
+                    state: false,
+                },
+                {
+                    todoId: 1,
+                    do: "작업1",
+                    state: false,
+                }
+            ],
+            complete: [
+                {
+                    todoId: 2,
+                    do: "작업2"
+                }
+            ]
+        }
+    }
 ];
 
 function App() {
@@ -117,6 +141,7 @@ function App() {
     };
 
     const onToDoDone = (taskId, todoId) => {
+        //const tempTask = task.todos
         setTask(
             task.map((t) => {
                 return t.taskId === taskId
