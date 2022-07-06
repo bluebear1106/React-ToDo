@@ -4,6 +4,7 @@ import styled from "styled-components";
 import Content from "./components/Content";
 import { useState } from "react";
 import { useEffect } from "react";
+import { useRef } from "react";
 
 const Container = styled.div`
     display: flex;
@@ -38,21 +39,16 @@ const tasks = [
                 {
                     todoId: 0,
                     do: "작업1",
-                    state: false,
                 },
                 {
                     todoId: 1,
                     do: "작업1",
-                    state: false,
                 }
             ],
             complete: [
-                {
-                    todoId: 2,
-                    do: "작업2"
-                }
             ]
-        }
+        },
+        todoCount: 2
     },
     {
         taskId: 1,
@@ -64,21 +60,16 @@ const tasks = [
                 {
                     todoId: 0,
                     do: "작업1",
-                    state: false,
                 },
                 {
                     todoId: 1,
                     do: "작업1",
-                    state: false,
                 }
             ],
             complete: [
-                {
-                    todoId: 2,
-                    do: "작업2"
-                }
             ]
-        }
+        },
+        todoCount: 2
     },
     {
         taskId: 2,
@@ -90,12 +81,10 @@ const tasks = [
                 {
                     todoId: 0,
                     do: "작업1",
-                    state: false,
                 },
                 {
                     todoId: 1,
                     do: "작업1",
-                    state: false,
                 }
             ],
             complete: [
@@ -104,13 +93,15 @@ const tasks = [
                     do: "작업2"
                 }
             ]
-        }
+        },
+        todoCount: 3
     }
 ];
 
 function App() {
     const [taskId, setTaskId] = useState(0);
     const [task, setTask] = useState(tasks);
+    const taskCount = task.length;
 
     const onTaskClick = (taskId) => {
         setTaskId(taskId);
@@ -118,35 +109,42 @@ function App() {
 
     const onTaskAdd = (taskTitle) => {
         const temp = {
-            todoId: 3,
+            taskId: taskCount,
             type: "task",
             title: taskTitle,
             date: new Date().toLocaleTimeString(),
-            todos: [],
+            todos: {
+                progress: [],
+                complete: []
+            },
+            todoCount: 0
         };
         setTask(task.concat(temp));
     };
 
     const onToDoAdd = (taskId, text) => {
+        let count = task.find((t) => t.taskId === taskId).todoCount;
         const todo = {
-            do: text,
-            state: false,
+            todoId: count,
+            do: text
         };
 
         setTask(
             task.map((t) => {
-                return t.taskId === taskId ? { ...t, todos: t.todos.concat(todo) } : t;
+                return t.taskId === taskId ? { ...t, todos: { ...t.todos, progress: t.todos.progress.concat(todo) }, todoCount: ++count } : t;
             })
         );
     };
 
-    const onToDoDone = (taskId, todoId) => {
-        //const tempTask = task.todos
+
+    const onToDoDone = (taskId, todo) => {
+        const tempTask = task.find((t) => t.taskId === taskId);
+        tempTask.todos.progress = tempTask.todos.progress.filter((work) => todo.todoId !== work.todoId);
+        tempTask.todos.complete = tempTask.todos.complete.concat(todo);
+
         setTask(
             task.map((t) => {
-                return t.taskId === taskId
-                    ? { ...t, todos: t.todos.map((todo) => (todo.todoId === todoId ? { ...todo, state: true } : todo)) }
-                    : t;
+                return t.taskId === taskId ? { ...t, ...tempTask } : t;
             })
         );
     };
@@ -165,7 +163,7 @@ function App() {
                 <NavigaionBar taskId={taskId} tasks={task} onTaskClick={onTaskClick} onTaskAdd={onTaskAdd} />
                 <Content
                     taskId={taskId}
-                    task={task.find((t) => t.taskId === taskId)}
+                    tasks={task}
                     onToDoAdd={onToDoAdd}
                     onToDoDone={onToDoDone}
                     onToDoDelete={onToDoDelete}

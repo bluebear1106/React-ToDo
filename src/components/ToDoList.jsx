@@ -2,19 +2,23 @@ import React from "react";
 import styled from "styled-components";
 import Colors from "../colors/colors";
 import { FontAwesomeIcon } from "../../node_modules/@fortawesome/react-fontawesome/index";
-import { faFileAlt, faTrashCan, faSquareCheck } from "../../node_modules/@fortawesome/free-regular-svg-icons/index";
+import {
+    faFileAlt,
+    faTrashCan,
+    faSquareCheck,
+    faCircle,
+} from "../../node_modules/@fortawesome/free-regular-svg-icons/index";
 import ListAddBar from "./ListAddBar";
 
 const StyledHeaderBox = styled.div`
-    height: 40px;
+    //height: 40px;
     background: ${Colors.F4F9F9};
     font-weight: bold;
 `;
 
-const StyledHeader = styled.div`
-    margin: 35px 25px 25px 25px;
-    font-size: 24px;
-    background: ${Colors.F4F9F9};
+const StyledHeader = styled.h1`
+    //margin: 35px 25px 25px 25px;
+    //font-size: 24px;
     text-align: left;
 `;
 
@@ -24,6 +28,7 @@ const StyledListBox = styled.div`
     flex-direction: column;
     align-items: stretch;
     overflow-y: scroll;
+    margin: 0px 25px;
 
     &::-webkit-scrollbar {
         display: none;
@@ -31,7 +36,7 @@ const StyledListBox = styled.div`
 `;
 
 const StyledListItem = styled.div`
-    margin: 0px 25px;
+    //margin: 0px 25px;
     border-radius: 4px;
     background: rgb(255, 255, 255);
 
@@ -62,6 +67,7 @@ const StyledListItem = styled.div`
     .sub-menu {
         width: 100px;
         float: right;
+        text-align: right;
         display: none;
     }
 
@@ -100,6 +106,22 @@ const StyledListItem = styled.div`
     }
 `;
 
+const StyledComplete = styled.div`
+    width: 150px;
+    height: 30px;
+    border-radius: 4px;
+    background: rgba(239, 239, 239, 075);
+    line-height: 30px;
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 10px;
+
+    .icon {
+        margin: 0 10px;
+        display: inline-block;
+    }
+`;
+
 const ToDoHeader = ({ listName }) => {
     return (
         <StyledHeaderBox>
@@ -108,15 +130,17 @@ const ToDoHeader = ({ listName }) => {
     );
 };
 
-const TodoListItem = ({ todo, taskId, onToDoDone, onToDoDelete }) => {
+const TodoListItem = ({ todo, taskId, onToDoDone, onToDoDelete, complete, type }) => {
     return (
         <StyledListItem>
             <FontAwesomeIcon className="icon" icon={faFileAlt} size="2x" />
             <div className="text">{todo.do}</div>
             <div className="sub-menu">
-                <div className="item done" onClick={() => onToDoDone(taskId, todo.todoId)}>
-                    <FontAwesomeIcon icon={faSquareCheck} size="lg" />
-                </div>
+                {!complete && !type && (
+                    <div className="item done" onClick={() => onToDoDone(taskId, todo)}>
+                        <FontAwesomeIcon icon={faSquareCheck} size="lg" />
+                    </div>
+                )}
                 <div className="item delete" onClick={() => onToDoDelete(taskId, todo.todoId)}>
                     <FontAwesomeIcon icon={faTrashCan} size="lg" />
                 </div>
@@ -125,22 +149,61 @@ const TodoListItem = ({ todo, taskId, onToDoDone, onToDoDelete }) => {
     );
 };
 
-const ToDoList = ({ taskId, task, onToDoAdd, onToDoDone, onToDoDelete }) => {
+const ToDoList = ({ taskId, tasks, onToDoAdd, onToDoDone, onToDoDelete }) => {
+    const task = tasks.find((t) => t.taskId === taskId);
+    const typeCheck = task.type === "menu";
     return (
         <>
             <StyledHeaderBox>
                 <StyledHeader>{task.title}</StyledHeader>
             </StyledHeaderBox>
             <StyledListBox>
-                {task.todos.map((todo, index) => (
-                    <TodoListItem
-                        key={index}
-                        todo={todo}
-                        taskId={taskId}
-                        onToDoDone={onToDoDone}
-                        onToDoDelete={onToDoDelete}
-                    />
-                ))}
+                {typeCheck &&
+                    tasks.map((t) =>
+                        t.todos.progress.map((todo, index) => (
+                            <TodoListItem
+                                key={index}
+                                todo={todo}
+                                taskId={t.taskId}
+                                onToDoDone={onToDoDone}
+                                onToDoDelete={onToDoDelete}
+                                type
+                            />
+                        ))
+                    )}
+
+                {!typeCheck &&
+                    task.todos.progress.map((todo, index) => (
+                        <TodoListItem
+                            key={index}
+                            todo={todo}
+                            taskId={taskId}
+                            onToDoDone={onToDoDone}
+                            onToDoDelete={onToDoDelete}
+                        />
+                    ))}
+
+                {!typeCheck && task.todos.complete.length > 0 && (
+                    <StyledComplete>
+                        <div className="icon">
+                            <FontAwesomeIcon icon={faCircle} />
+                        </div>
+                        끝낸 일
+                    </StyledComplete>
+                )}
+
+                {!typeCheck &&
+                    task.todos.complete.length > 0 &&
+                    task.todos.complete.map((todo, index) => (
+                        <TodoListItem
+                            key={index}
+                            todo={todo}
+                            taskId={taskId}
+                            onToDoDone={onToDoDone}
+                            onToDoDelete={onToDoDelete}
+                            complete
+                        />
+                    ))}
             </StyledListBox>
             {task && task.type === "task" ? <ListAddBar taskId={taskId} onToDoAdd={onToDoAdd} /> : null}
         </>
