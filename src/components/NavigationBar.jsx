@@ -110,7 +110,7 @@ const NavigaionBar = ({ taskId, tasks, onTaskClick, onTaskAdd }) => {
             </StyledNavHeader>
             <StyledNavMenuBox>
                 {tasks.map((task) =>
-                    task.type === "menu" ? (
+                    task.type !== "task" ? (
                         <StyledNavMenuItem key={task.taskId} onClick={() => onTaskClick(task.taskId)}>
                             <div className={`box ${task.taskId === taskId ? "active" : ""}`} />
                             <div className="text">{task.title}</div>

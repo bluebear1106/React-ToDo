@@ -31,70 +31,43 @@ const menus = {
 const tasks = [
     {
         taskId: 0,
-        type: "menu",
+        type: "today",
         title: "오늘 할 일",
         date: "",
-        todos: {
-            progress: [
-                {
-                    todoId: 0,
-                    do: "작업1",
-                },
-                {
-                    todoId: 1,
-                    do: "작업1",
-                }
-            ],
-            complete: [
-            ]
-        },
-        todoCount: 2
+        todos: [],
+        todoCount: 2,
+        completeCount: 0
     },
     {
         taskId: 1,
-        type: "menu",
+        type: "important",
         title: "중요",
         date: "",
-        todos: {
-            progress: [
-                {
-                    todoId: 0,
-                    do: "작업1",
-                },
-                {
-                    todoId: 1,
-                    do: "작업1",
-                }
-            ],
-            complete: [
-            ]
-        },
-        todoCount: 2
+        todos: [],
+        todoCount: 0,
+        completeCount: 0
     },
     {
         taskId: 2,
         type: "task",
         title: "테스트",
         date: new Date().toLocaleTimeString(),
-        todos: {
-            progress: [
-                {
-                    todoId: 0,
-                    do: "작업1",
-                },
-                {
-                    todoId: 1,
-                    do: "작업1",
-                }
-            ],
-            complete: [
-                {
-                    todoId: 2,
-                    do: "작업2"
-                }
-            ]
-        },
-        todoCount: 3
+        todos: [
+            {
+                todoId: 0,
+                do: "작업1",
+                complete: false,
+                important: false,
+            },
+            {
+                todoId: 1,
+                do: "작업1",
+                complete: false,
+                important: false,
+            }
+        ],
+        todoCount: 2,
+        completeCount: 0
     }
 ];
 
@@ -113,10 +86,7 @@ function App() {
             type: "task",
             title: taskTitle,
             date: new Date().toLocaleTimeString(),
-            todos: {
-                progress: [],
-                complete: []
-            },
+            todos: [],
             todoCount: 0
         };
         setTask(task.concat(temp));
@@ -126,25 +96,14 @@ function App() {
         let count = task.find((t) => t.taskId === taskId).todoCount;
         const todo = {
             todoId: count,
-            do: text
+            do: text,
+            complete: false,
+            important: false,
         };
 
         setTask(
             task.map((t) => {
-                return t.taskId === taskId ? { ...t, todos: { ...t.todos, progress: t.todos.progress.concat(todo) }, todoCount: ++count } : t;
-            })
-        );
-    };
-
-
-    const onToDoDone = (taskId, todo) => {
-        const tempTask = task.find((t) => t.taskId === taskId);
-        tempTask.todos.progress = tempTask.todos.progress.filter((work) => todo.todoId !== work.todoId);
-        tempTask.todos.complete = tempTask.todos.complete.concat(todo);
-
-        setTask(
-            task.map((t) => {
-                return t.taskId === taskId ? { ...t, ...tempTask } : t;
+                return t.taskId === taskId ? { ...t, todos: t.todos.concat(todo), todoCount: ++count } : t;
             })
         );
     };
@@ -157,6 +116,38 @@ function App() {
         );
     };
 
+    const onToDoComplete = (taskId, todoId) => {
+        // const tempTask = task.find((t) => t.taskId === taskId);
+        // tempTask.todos.progress = tempTask.todos.progress.filter((work) => todo.todoId !== work.todoId);
+        // tempTask.todos.complete = tempTask.todos.complete.concat(todo);
+
+        setTask(
+            task.map((t) => {
+                return t.taskId === taskId ? {
+                    ...t,
+                    todos: t.todos.map((todo) => {
+                        return todo.todoId === todoId ? { ...todo, complete: true } : todo
+                    }),
+                    completeCount: ++t.completeCount
+                } : t;
+            })
+        );
+    };
+
+    const onToDoImportant = (taskId, todoId) => {
+        setTask(
+            task.map((t) => {
+                return t.taskId === taskId ? {
+                    ...t,
+                    todos: t.todos.map((todo) => {
+                        return todo.todoId === todoId ? { ...todo, important: !todo.important } : todo
+                    })
+                    ,
+                } : t;
+            })
+        );
+    }
+
     return (
         <>
             <Container>
@@ -165,8 +156,9 @@ function App() {
                     taskId={taskId}
                     tasks={task}
                     onToDoAdd={onToDoAdd}
-                    onToDoDone={onToDoDone}
                     onToDoDelete={onToDoDelete}
+                    onToDoComplete={onToDoComplete}
+                    onToDoImportant={onToDoImportant}
                 />
             </Container>
         </>

@@ -3,10 +3,10 @@ import styled from "styled-components";
 import Colors from "../colors/colors";
 import { FontAwesomeIcon } from "../../node_modules/@fortawesome/react-fontawesome/index";
 import {
-    faFileAlt,
     faTrashCan,
     faSquareCheck,
     faCircle,
+    faStar,
 } from "../../node_modules/@fortawesome/free-regular-svg-icons/index";
 import ListAddBar from "./ListAddBar";
 
@@ -40,28 +40,34 @@ const StyledListItem = styled.div`
     border-radius: 4px;
     background: rgb(255, 255, 255);
 
-    .icon {
-        margin: 5px;
-        color: ${Colors.F4F9F9};
-        vertical-align: middle;
+    .box {
+        height: 20px;
+        padding: 10px;
+        line-height: 20px;
+        display: inline-block;
     }
 
     .text {
-        display: inline-block;
         font-weight: bold;
-        vertical-align: middle;
+        margin-left: 10px;
+        //vertical-align: middle;
     }
 
     &:hover {
         background: rgba(230, 230, 230, 0.25);
     }
 
-    &:hover .icon {
-        color: rgb(255, 255, 255);
-    }
-
     & + & {
         margin-top: 10px;
+    }
+
+    .important {
+        color: ${Colors.F4F9F9};
+        display: inline-block;
+    }
+
+    &:hover .important {
+        color: rgb(255, 255, 255);
     }
 
     .sub-menu {
@@ -130,14 +136,22 @@ const ToDoHeader = ({ listName }) => {
     );
 };
 
-const TodoListItem = ({ todo, taskId, onToDoDone, onToDoDelete, complete, type }) => {
+const TodoListItem = ({ todo, taskId, onToDoDelete, onToDoComplete, onToDoImportant, complete }) => {
     return (
         <StyledListItem>
-            <FontAwesomeIcon className="icon" icon={faFileAlt} size="2x" />
-            <div className="text">{todo.do}</div>
+            <div className="box">
+                <div className="important" onClick={() => onToDoImportant(taskId, todo.todoId)}>
+                    {todo.important ? (
+                        <FontAwesomeIcon icon={faStar} color="yellow" />
+                    ) : (
+                        <FontAwesomeIcon icon={faStar} />
+                    )}
+                </div>
+                <span className="text">{todo.do}</span>
+            </div>
             <div className="sub-menu">
-                {!complete && !type && (
-                    <div className="item done" onClick={() => onToDoDone(taskId, todo)}>
+                {!complete && (
+                    <div className="item done" onClick={() => onToDoComplete(taskId, todo.todoId)}>
                         <FontAwesomeIcon icon={faSquareCheck} size="lg" />
                     </div>
                 )}
@@ -149,41 +163,84 @@ const TodoListItem = ({ todo, taskId, onToDoDone, onToDoDelete, complete, type }
     );
 };
 
-const ToDoList = ({ taskId, tasks, onToDoAdd, onToDoDone, onToDoDelete }) => {
+const TodoTypeList = ({ type, tasks, onToDoDelete, onToDoComplete, onToDoImportant }) => {
+    switch (type) {
+        case "today": {
+            return tasks.map((t) =>
+                t.todos.map(
+                    (todo, index) =>
+                        !todo.complete &&
+                        !todo.important && (
+                            <TodoListItem
+                                key={index}
+                                todo={todo}
+                                taskId={t.taskId}
+                                onToDoDelete={onToDoDelete}
+                                onToDoComplete={onToDoComplete}
+                                onToDoImportant={onToDoImportant}
+                            />
+                        )
+                )
+            );
+        }
+        case "important": {
+            return tasks.map((t) =>
+                t.todos.map(
+                    (todo, index) =>
+                        !todo.complete &&
+                        todo.important && (
+                            <TodoListItem
+                                key={index}
+                                todo={todo}
+                                taskId={t.taskId}
+                                onToDoDelete={onToDoDelete}
+                                onToDoComplete={onToDoComplete}
+                                onToDoImportant={onToDoImportant}
+                            />
+                        )
+                )
+            );
+        }
+        default:
+            return null;
+    }
+};
+
+const ToDoList = ({ taskId, tasks, onToDoAdd, onToDoDelete, onToDoComplete, onToDoImportant }) => {
     const task = tasks.find((t) => t.taskId === taskId);
-    const typeCheck = task.type === "menu";
+    const typeCheck = task.type === "today" || task.type === "important";
     return (
         <>
             <StyledHeaderBox>
                 <StyledHeader>{task.title}</StyledHeader>
             </StyledHeaderBox>
             <StyledListBox>
-                {typeCheck &&
-                    tasks.map((t) =>
-                        t.todos.progress.map((todo, index) => (
-                            <TodoListItem
-                                key={index}
-                                todo={todo}
-                                taskId={t.taskId}
-                                onToDoDone={onToDoDone}
-                                onToDoDelete={onToDoDelete}
-                                type
-                            />
-                        ))
-                    )}
+                {typeCheck && (
+                    <TodoTypeList
+                        type={task.type}
+                        tasks={tasks}
+                        onToDoDelete={onToDoDelete}
+                        onToDoComplete={onToDoComplete}
+                        onToDoImportant={onToDoImportant}
+                    />
+                )}
 
                 {!typeCheck &&
-                    task.todos.progress.map((todo, index) => (
-                        <TodoListItem
-                            key={index}
-                            todo={todo}
-                            taskId={taskId}
-                            onToDoDone={onToDoDone}
-                            onToDoDelete={onToDoDelete}
-                        />
-                    ))}
+                    task.todos.map(
+                        (todo, index) =>
+                            !todo.complete && (
+                                <TodoListItem
+                                    key={index}
+                                    todo={todo}
+                                    taskId={taskId}
+                                    onToDoDelete={onToDoDelete}
+                                    onToDoComplete={onToDoComplete}
+                                    onToDoImportant={onToDoImportant}
+                                />
+                            )
+                    )}
 
-                {!typeCheck && task.todos.complete.length > 0 && (
+                {!typeCheck && 0 < task.completeCount && (
                     <StyledComplete>
                         <div className="icon">
                             <FontAwesomeIcon icon={faCircle} />
@@ -193,17 +250,20 @@ const ToDoList = ({ taskId, tasks, onToDoAdd, onToDoDone, onToDoDelete }) => {
                 )}
 
                 {!typeCheck &&
-                    task.todos.complete.length > 0 &&
-                    task.todos.complete.map((todo, index) => (
-                        <TodoListItem
-                            key={index}
-                            todo={todo}
-                            taskId={taskId}
-                            onToDoDone={onToDoDone}
-                            onToDoDelete={onToDoDelete}
-                            complete
-                        />
-                    ))}
+                    task.todos.map(
+                        (todo, index) =>
+                            todo.complete && (
+                                <TodoListItem
+                                    key={index}
+                                    todo={todo}
+                                    taskId={taskId}
+                                    onToDoDelete={onToDoDelete}
+                                    onToDoComplete={onToDoComplete}
+                                    onToDoImportant={onToDoImportant}
+                                    complete
+                                />
+                            )
+                    )}
             </StyledListBox>
             {task && task.type === "task" ? <ListAddBar taskId={taskId} onToDoAdd={onToDoAdd} /> : null}
         </>
