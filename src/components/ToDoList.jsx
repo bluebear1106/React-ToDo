@@ -140,7 +140,7 @@ const TodoListItem = ({ todo, taskId, onToDoDelete, onToDoComplete, onToDoImport
     return (
         <StyledListItem>
             <div className="box">
-                <div className="important" onClick={() => onToDoImportant(taskId, todo.todoId)}>
+                <div className="important" onClick={() => onToDoImportant(todo)}>
                     {todo.important ? (
                         <FontAwesomeIcon icon={faStar} color="yellow" />
                     ) : (
@@ -163,84 +163,28 @@ const TodoListItem = ({ todo, taskId, onToDoDelete, onToDoComplete, onToDoImport
     );
 };
 
-const TodoTypeList = ({ type, tasks, onToDoDelete, onToDoComplete, onToDoImportant }) => {
-    switch (type) {
-        case "today": {
-            return tasks.map((t) =>
-                t.todos.map(
-                    (todo, index) =>
-                        !todo.complete &&
-                        !todo.important && (
-                            <TodoListItem
-                                key={index}
-                                todo={todo}
-                                taskId={t.taskId}
-                                onToDoDelete={onToDoDelete}
-                                onToDoComplete={onToDoComplete}
-                                onToDoImportant={onToDoImportant}
-                            />
-                        )
-                )
-            );
-        }
-        case "important": {
-            return tasks.map((t) =>
-                t.todos.map(
-                    (todo, index) =>
-                        !todo.complete &&
-                        todo.important && (
-                            <TodoListItem
-                                key={index}
-                                todo={todo}
-                                taskId={t.taskId}
-                                onToDoDelete={onToDoDelete}
-                                onToDoComplete={onToDoComplete}
-                                onToDoImportant={onToDoImportant}
-                            />
-                        )
-                )
-            );
-        }
-        default:
-            return null;
-    }
-};
-
-const ToDoList = ({ taskId, tasks, onToDoAdd, onToDoDelete, onToDoComplete, onToDoImportant }) => {
-    const task = tasks.find((t) => t.taskId === taskId);
-    const typeCheck = task.type === "today" || task.type === "important";
+const ToDoList = ({ task, onToDoAdd, onToDoDelete, onToDoComplete, onToDoImportant }) => {
     return (
         <>
             <StyledHeaderBox>
                 <StyledHeader>{task.title}</StyledHeader>
             </StyledHeaderBox>
             <StyledListBox>
-                {typeCheck && (
-                    <TodoTypeList
-                        type={task.type}
-                        tasks={tasks}
-                        onToDoDelete={onToDoDelete}
-                        onToDoComplete={onToDoComplete}
-                        onToDoImportant={onToDoImportant}
-                    />
+                {task.todos.map(
+                    (todo, index) =>
+                        !todo.complete && (
+                            <TodoListItem
+                                key={index}
+                                todo={todo}
+                                taskId={todo.taskId}
+                                onToDoDelete={onToDoDelete}
+                                onToDoComplete={onToDoComplete}
+                                onToDoImportant={onToDoImportant}
+                            />
+                        )
                 )}
 
-                {!typeCheck &&
-                    task.todos.map(
-                        (todo, index) =>
-                            !todo.complete && (
-                                <TodoListItem
-                                    key={index}
-                                    todo={todo}
-                                    taskId={taskId}
-                                    onToDoDelete={onToDoDelete}
-                                    onToDoComplete={onToDoComplete}
-                                    onToDoImportant={onToDoImportant}
-                                />
-                            )
-                    )}
-
-                {!typeCheck && 0 < task.completeCount && (
+                {task.completeCount && (
                     <StyledComplete>
                         <div className="icon">
                             <FontAwesomeIcon icon={faCircle} />
@@ -249,23 +193,22 @@ const ToDoList = ({ taskId, tasks, onToDoAdd, onToDoDelete, onToDoComplete, onTo
                     </StyledComplete>
                 )}
 
-                {!typeCheck &&
-                    task.todos.map(
-                        (todo, index) =>
-                            todo.complete && (
-                                <TodoListItem
-                                    key={index}
-                                    todo={todo}
-                                    taskId={taskId}
-                                    onToDoDelete={onToDoDelete}
-                                    onToDoComplete={onToDoComplete}
-                                    onToDoImportant={onToDoImportant}
-                                    complete
-                                />
-                            )
-                    )}
+                {task.todos.map(
+                    (todo, index) =>
+                        todo.complete && (
+                            <TodoListItem
+                                key={index}
+                                todo={todo}
+                                taskId={todo.taskId}
+                                onToDoDelete={onToDoDelete}
+                                onToDoComplete={onToDoComplete}
+                                onToDoImportant={onToDoImportant}
+                                complete
+                            />
+                        )
+                )}
             </StyledListBox>
-            {task && task.type === "task" ? <ListAddBar taskId={taskId} onToDoAdd={onToDoAdd} /> : null}
+            {task && task.type === "task" ? <ListAddBar taskId={task.taskId} onToDoAdd={onToDoAdd} /> : null}
         </>
     );
 };

@@ -28,7 +28,7 @@ const menus = {
     ],
 };
 
-const tasks = [
+const initialTasks = [
     {
         taskId: 0,
         type: "today",
@@ -43,8 +43,16 @@ const tasks = [
         type: "important",
         title: "중요",
         date: "",
-        todos: [],
-        todoCount: 0,
+        todos: [
+            {
+                taskId: 2,
+                todoId: 0,
+                do: "작업1",
+                complete: false,
+                important: false,
+            }
+        ],
+        todoCount: 1,
         completeCount: 0
     },
     {
@@ -54,12 +62,14 @@ const tasks = [
         date: new Date().toLocaleTimeString(),
         todos: [
             {
+                taskId: 2,
                 todoId: 0,
                 do: "작업1",
                 complete: false,
                 important: false,
             },
             {
+                taskId: 2,
                 todoId: 1,
                 do: "작업1",
                 complete: false,
@@ -73,8 +83,8 @@ const tasks = [
 
 function App() {
     const [taskId, setTaskId] = useState(0);
-    const [task, setTask] = useState(tasks);
-    const taskCount = task.length;
+    const [tasks, setTask] = useState(initialTasks);
+    const taskCount = tasks.length;
 
     const onTaskClick = (taskId) => {
         setTaskId(taskId);
@@ -89,11 +99,11 @@ function App() {
             todos: [],
             todoCount: 0
         };
-        setTask(task.concat(temp));
+        setTask(tasks.concat(temp));
     };
 
     const onToDoAdd = (taskId, text) => {
-        let count = task.find((t) => t.taskId === taskId).todoCount;
+        let count = tasks.find((t) => t.taskId === taskId).todoCount;
         const todo = {
             todoId: count,
             do: text,
@@ -102,7 +112,7 @@ function App() {
         };
 
         setTask(
-            task.map((t) => {
+            tasks.map((t) => {
                 return t.taskId === taskId ? { ...t, todos: t.todos.concat(todo), todoCount: ++count } : t;
             })
         );
@@ -110,7 +120,7 @@ function App() {
 
     const onToDoDelete = (taskId, todoId) => {
         setTask(
-            task.map((t) => {
+            tasks.map((t) => {
                 return t.taskId === taskId ? { ...t, todos: t.todos.filter((todo) => todo.todoId !== todoId) } : t;
             })
         );
@@ -122,7 +132,7 @@ function App() {
         // tempTask.todos.complete = tempTask.todos.complete.concat(todo);
 
         setTask(
-            task.map((t) => {
+            tasks.map((t) => {
                 return t.taskId === taskId ? {
                     ...t,
                     todos: t.todos.map((todo) => {
@@ -134,15 +144,30 @@ function App() {
         );
     };
 
-    const onToDoImportant = (taskId, todoId) => {
+    const onToDoImportant = (taskId, importantTodo) => {
+        // let task = task.map((task) => {
+        //     return task.taskId === 1 ? {
+        //         ...task,
+        //         todos: task.todos.map((todo) => {
+        //             return todo.todoId === importantTodo.todoId ? !importantTodo.important && { ...todo, important: !todo.important } : todo
+        //         })
+        //     } : task
+        // });
+        setTask(tasks.map((task) => {
+            return task.taskId === 1 && {
+                ...task,
+                todos: task.todos.concat(importantTodo)
+            }
+        }));
+
+
         setTask(
-            task.map((t) => {
+            tasks.map((t) => {
                 return t.taskId === taskId ? {
                     ...t,
                     todos: t.todos.map((todo) => {
-                        return todo.todoId === todoId ? { ...todo, important: !todo.important } : todo
+                        return todo.todoId === importantTodo.todoId ? { ...todo, important: !todo.important } : todo
                     })
-                    ,
                 } : t;
             })
         );
@@ -151,10 +176,10 @@ function App() {
     return (
         <>
             <Container>
-                <NavigaionBar taskId={taskId} tasks={task} onTaskClick={onTaskClick} onTaskAdd={onTaskAdd} />
+                <NavigaionBar taskId={taskId} tasks={tasks} onTaskClick={onTaskClick} onTaskAdd={onTaskAdd} />
                 <Content
                     taskId={taskId}
-                    tasks={task}
+                    task={tasks.find((task) => task.taskId === taskId)}
                     onToDoAdd={onToDoAdd}
                     onToDoDelete={onToDoDelete}
                     onToDoComplete={onToDoComplete}
