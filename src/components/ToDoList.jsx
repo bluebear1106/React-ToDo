@@ -140,7 +140,7 @@ const TodoListItem = ({ todo, taskId, onToDoDelete, onToDoComplete, onToDoImport
     return (
         <StyledListItem>
             <div className="box">
-                <div className="important" onClick={() => onToDoImportant(todo)}>
+                <div className="important" onClick={() => onToDoImportant(taskId, todo)}>
                     {todo.important ? (
                         <FontAwesomeIcon icon={faStar} color="yellow" />
                     ) : (
@@ -163,7 +163,7 @@ const TodoListItem = ({ todo, taskId, onToDoDelete, onToDoComplete, onToDoImport
     );
 };
 
-const ToDoList = ({ task, onToDoAdd, onToDoDelete, onToDoComplete, onToDoImportant }) => {
+const ToDoList = ({ taskId, task, onToDoAdd, onToDoDelete, onToDoComplete, onToDoImportant }) => {
     return (
         <>
             <StyledHeaderBox>
@@ -176,7 +176,7 @@ const ToDoList = ({ task, onToDoAdd, onToDoDelete, onToDoComplete, onToDoImporta
                             <TodoListItem
                                 key={index}
                                 todo={todo}
-                                taskId={todo.taskId}
+                                taskId={taskId}
                                 onToDoDelete={onToDoDelete}
                                 onToDoComplete={onToDoComplete}
                                 onToDoImportant={onToDoImportant}
@@ -184,7 +184,7 @@ const ToDoList = ({ task, onToDoAdd, onToDoDelete, onToDoComplete, onToDoImporta
                         )
                 )}
 
-                {task.completeCount && (
+                {task.completeCount > 0 && (
                     <StyledComplete>
                         <div className="icon">
                             <FontAwesomeIcon icon={faCircle} />

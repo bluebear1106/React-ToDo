@@ -145,32 +145,25 @@ function App() {
     };
 
     const onToDoImportant = (taskId, importantTodo) => {
-        // let task = task.map((task) => {
-        //     return task.taskId === 1 ? {
-        //         ...task,
-        //         todos: task.todos.map((todo) => {
-        //             return todo.todoId === importantTodo.todoId ? !importantTodo.important && { ...todo, important: !todo.important } : todo
-        //         })
-        //     } : task
-        // });
+
+        const tempTask = tasks.find((task) => task.taskId === taskId);
+        const tempTodo = tempTask && tempTask.todos.find((todo) => todo.taskId === importantTodo.taskId && todo.todoId === importantTodo.todoId)
+
+        if (tempTask !== null && tempTodo !== null) {
+            tempTask.todos.concat({
+                ...tempTodo,
+                important: !tempTodo.important
+            });
+        }
+        else {
+            tempTask.todos.filter((todo) => {
+                return todo.taskId !== importantTodo.taskId && todo.todoId !== importantTodo.todoId
+            });
+        }
+
         setTask(tasks.map((task) => {
-            return task.taskId === 1 && {
-                ...task,
-                todos: task.todos.concat(importantTodo)
-            }
+            return task.taskId === 1 ? { ...tempTask } : task
         }));
-
-
-        setTask(
-            tasks.map((t) => {
-                return t.taskId === taskId ? {
-                    ...t,
-                    todos: t.todos.map((todo) => {
-                        return todo.todoId === importantTodo.todoId ? { ...todo, important: !todo.important } : todo
-                    })
-                } : t;
-            })
-        );
     }
 
     return (
