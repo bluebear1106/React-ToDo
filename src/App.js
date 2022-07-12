@@ -146,23 +146,37 @@ function App() {
 
     const onToDoImportant = (taskId, importantTodo) => {
 
-        const tempTask = tasks.find((task) => task.taskId === taskId);
+        let tempTask = tasks.find((task) => task.taskId === 1);
         const tempTodo = tempTask && tempTask.todos.find((todo) => todo.taskId === importantTodo.taskId && todo.todoId === importantTodo.todoId)
-
-        if (tempTask !== null && tempTodo !== null) {
-            tempTask.todos.concat({
-                ...tempTodo,
-                important: !tempTodo.important
-            });
+        if (tempTask != null && tempTodo == null) {
+            const todo = {
+                ...importantTodo,
+                important: !importantTodo.important
+            };
+            tempTask.todos = tempTask.todos.concat(todo);
         }
         else {
-            tempTask.todos.filter((todo) => {
-                return todo.taskId !== importantTodo.taskId && todo.todoId !== importantTodo.todoId
+            tempTask.todos = tempTask.todos.filter((todo) => {
+                return todo.taskId === importantTodo.taskId && todo.todoId !== importantTodo.todoId
             });
         }
 
         setTask(tasks.map((task) => {
-            return task.taskId === 1 ? { ...tempTask } : task
+            if (task.taskId === 1) {
+                return { ...tempTask };
+            }
+            else if (task.taskId === taskId) {
+                return {
+                    ...task,
+                    todos: task.todos.map((todo) => {
+                        return todo.todoId === importantTodo.todoId ? { ...todo, important: !todo.important } : todo
+                    })
+                };
+            }
+            else {
+                return task;
+            }
+            // return task.taskId === 1 ? { ...tempTask } : task
         }));
     }
 
