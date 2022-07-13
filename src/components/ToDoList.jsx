@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import Colors from "../colors/colors";
 import { FontAwesomeIcon } from "../../node_modules/@fortawesome/react-fontawesome/index";
@@ -9,6 +9,8 @@ import {
     faStar,
 } from "../../node_modules/@fortawesome/free-regular-svg-icons/index";
 import ListAddBar from "./ListAddBar";
+import Modal from "./common/Modal";
+import EditModal from "./common/EditModal";
 
 const StyledHeaderBox = styled.div`
     //height: 40px;
@@ -71,7 +73,7 @@ const StyledListItem = styled.div`
     }
 
     .sub-menu {
-        width: 100px;
+        width: 150px;
         float: right;
         text-align: right;
         display: none;
@@ -136,7 +138,7 @@ const ToDoHeader = ({ listName }) => {
     );
 };
 
-const TodoListItem = ({ todo, taskId, onToDoDelete, onToDoComplete, onToDoImportant, complete }) => {
+const TodoListItem = ({ todo, taskId, onEdit, onToDoDelete, onToDoComplete, onToDoImportant, complete }) => {
     return (
         <StyledListItem>
             <div className="box">
@@ -150,6 +152,9 @@ const TodoListItem = ({ todo, taskId, onToDoDelete, onToDoComplete, onToDoImport
                 <span className="text">{todo.do}</span>
             </div>
             <div className="sub-menu">
+                <div className="item delete" onClick={() => onEdit(todo)}>
+                    <FontAwesomeIcon icon={faTrashCan} size="lg" />
+                </div>
                 {!complete && (
                     <div className="item done" onClick={() => onToDoComplete(taskId, todo.todoId)}>
                         <FontAwesomeIcon icon={faSquareCheck} size="lg" />
@@ -163,7 +168,24 @@ const TodoListItem = ({ todo, taskId, onToDoDelete, onToDoComplete, onToDoImport
     );
 };
 
-const ToDoList = ({ taskId, task, onToDoAdd, onToDoDelete, onToDoComplete, onToDoImportant }) => {
+const ToDoList = ({ taskId, task, onToDoEdit, onToDoAdd, onToDoDelete, onToDoComplete, onToDoImportant }) => {
+    const [modal, setModal] = useState(false);
+    const [tempTodo, setTempTodo] = useState(null);
+
+    const onEdit = (todo) => {
+        setTempTodo(todo);
+        setModal(true);
+    };
+
+    const onModalCancel = () => {
+        setModal(false);
+    };
+
+    const onModalConfirm = (text) => {
+        onToDoEdit(tempTodo.todoId, text);
+        setModal(false);
+    };
+
     return (
         <>
             <StyledHeaderBox>
@@ -177,6 +199,7 @@ const ToDoList = ({ taskId, task, onToDoAdd, onToDoDelete, onToDoComplete, onToD
                                 key={index}
                                 todo={todo}
                                 taskId={taskId}
+                                onEdit={onEdit}
                                 onToDoDelete={onToDoDelete}
                                 onToDoComplete={onToDoComplete}
                                 onToDoImportant={onToDoImportant}
@@ -200,6 +223,7 @@ const ToDoList = ({ taskId, task, onToDoAdd, onToDoDelete, onToDoComplete, onToD
                                 key={index}
                                 todo={todo}
                                 taskId={todo.taskId}
+                                onEdit={onEdit}
                                 onToDoDelete={onToDoDelete}
                                 onToDoComplete={onToDoComplete}
                                 onToDoImportant={onToDoImportant}
@@ -209,6 +233,7 @@ const ToDoList = ({ taskId, task, onToDoAdd, onToDoDelete, onToDoComplete, onToD
                 )}
             </StyledListBox>
             {task && task.type === "task" ? <ListAddBar taskId={task.taskId} onToDoAdd={onToDoAdd} /> : null}
+            <EditModal visible={modal} title="할 일 편집" onCancel={onModalCancel} onConfirm={onModalConfirm} />
         </>
     );
 };

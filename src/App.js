@@ -126,6 +126,16 @@ function App() {
         );
     };
 
+    const onToDoEdit = (todoId, text) => {
+        setTask(tasks.map((task) => {
+            return task.taskId === taskId ? {
+                ...task, todos: task.todos.map((todo) => {
+                    return todo.todoId === todoId ? { ...todo, do: text } : todo
+                })
+            } : task
+        }));
+    };
+
     const onToDoComplete = (taskId, todoId) => {
         // const tempTask = task.find((t) => t.taskId === taskId);
         // tempTask.todos.progress = tempTask.todos.progress.filter((work) => todo.todoId !== work.todoId);
@@ -148,6 +158,7 @@ function App() {
 
         let tempTask = tasks.find((task) => task.taskId === 1);
         const tempTodo = tempTask && tempTask.todos.find((todo) => todo.taskId === importantTodo.taskId && todo.todoId === importantTodo.todoId)
+
         if (tempTask != null && tempTodo == null) {
             const todo = {
                 ...importantTodo,
@@ -178,6 +189,14 @@ function App() {
             }
             // return task.taskId === 1 ? { ...tempTask } : task
         }));
+        setTask(tasks.map((task) => {
+            return task.taskId === importantTodo.taskId ? {
+                ...task,
+                todos: task.todos.map((todo) => {
+                    return todo.todoId === importantTodo.todoId ? { ...todo, important: !todo.important } : todo
+                })
+            } : task
+        }))
     }
 
     return (
@@ -187,6 +206,7 @@ function App() {
                 <Content
                     taskId={taskId}
                     task={tasks.find((task) => task.taskId === taskId)}
+                    onToDoEdit={onToDoEdit}
                     onToDoAdd={onToDoAdd}
                     onToDoDelete={onToDoDelete}
                     onToDoComplete={onToDoComplete}
